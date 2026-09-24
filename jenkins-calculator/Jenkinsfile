@@ -45,7 +45,15 @@ pipeline {
 
         stage('AWS Identity Check') {
             steps {
-                bat 'aws sts get-caller-identity'
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-devops',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    bat 'aws sts get-caller-identity'
+                }
             }
         }
     }
