@@ -42,6 +42,12 @@ pipeline {
                 }
             }
         }
+
+        stage('AWS Identity Check') {
+            steps {
+                bat 'aws sts get-caller-identity'
+            }
+        }
     }
 
     post {
