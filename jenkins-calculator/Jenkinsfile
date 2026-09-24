@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Test') {
+            steps {
+                dir('jenkins-calculator') {
+                    bat 'python -m pytest -v'
+                }
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                dir('jenkins-calculator') {
+                    bat 'docker build -t jenkins-calculator .'
+                }
+            }
+        }
+
+        stage('SAM Validate') {
+            steps {
+                dir('jenkins-calculator') {
+                    bat 'sam validate'
+                }
+            }
+        }
+
+        stage('SAM Build') {
+            steps {
+                dir('jenkins-calculator') {
+                    bat 'sam build'
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Jenkins pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'Jenkins pipeline failed. Check the console output.'
+        }
+    }
+}
