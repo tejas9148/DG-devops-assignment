@@ -56,6 +56,30 @@ pipeline {
                 }
             }
         }
+
+        stage('SAM Deploy') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'aws-devops',
+                        usernameVariable: 'AWS_ACCESS_KEY_ID',
+                        passwordVariable: 'AWS_SECRET_ACCESS_KEY'
+                    )
+                ]) {
+                    dir('jenkins-calculator') {
+                        bat '''
+                            sam deploy ^
+                              --stack-name jenkins-calculator ^
+                              --region ap-south-1 ^
+                              --capabilities CAPABILITY_IAM ^
+                              --resolve-s3 ^
+                              --no-confirm-changeset ^
+                              --no-fail-on-empty-changeset
+                        '''
+                    }
+                }
+            }
+        }
     }
 
     post {
